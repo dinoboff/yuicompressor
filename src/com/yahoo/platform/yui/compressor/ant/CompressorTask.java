@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 
@@ -36,7 +37,8 @@ public abstract class CompressorTask extends Task {
 	private String charset;
 	private int lineBreak = -1;
 	private boolean verbose;
-	
+	private boolean failonerror = true;
+
 	public void setSrcFile(File srcfile) {
 		this.srcFile = srcfile;
 	}
@@ -85,6 +87,14 @@ public abstract class CompressorTask extends Task {
 
 	protected boolean isVerbose() {
 		return verbose;
+	}
+
+	public boolean isFailonerror() {
+		return failonerror;
+	}
+
+	public void setFailonerror(boolean failonerror) {
+		this.failonerror = failonerror;
 	}
 
 	/**
@@ -266,13 +276,15 @@ public abstract class CompressorTask extends Task {
 						charset);
 				this.compress(out);
 
+			} catch (BuildException e) {
+				handle(e);
 			} catch (UnsupportedEncodingException e) {
-				throw new BuildException("Unsupported encoding: " + charset);
+				handle(new BuildException("Unsupported encoding: " + charset));
 			} catch (FileNotFoundException e) {
-				throw new BuildException("File not found. " + e);
+				handle(new BuildException("File not found. " + e));
 			} catch (IOException e) {
-				throw new BuildException("Could not read or close "
-						+ srcFile + " or " + dstFile + ". " + e);
+				handle(new BuildException("Could not read or close " + srcFile
+						+ " or " + dstFile + ". " + e));
 			}
 			
 
@@ -298,7 +310,15 @@ public abstract class CompressorTask extends Task {
 
 		}
 	}
-	
+
+	protected void handle(Exception e) {
+		if (failonerror) {
+			throw (e instanceof BuildException) ? (BuildException) e
+					: new BuildException(e);
+		}
+		log(e, Project.MSG_ERR);
+	}
+
 	/**
 	 * Set a compressor
 	 * 
