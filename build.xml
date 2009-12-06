@@ -36,6 +36,7 @@
         <unjar src="${lib.dir}/rhino-1.6R7.jar" dest="${build.dir}/jar"/>
         <copy todir="${build.dir}/jar">
             <fileset dir="${build.dir}/classes" includes="**/*.class"/>
+        	<fileset dir="${src.dir}" includes="**/antlib.xml"/>
         </copy>
         <jar destfile="${build.dir}/${jar.name}" basedir="${build.dir}/jar">
             <manifest>

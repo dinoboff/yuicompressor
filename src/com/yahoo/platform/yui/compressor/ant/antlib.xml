@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<antlib>
+	<taskdef name="jscompressor"  classname="com.yahoo.platform.yui.compressor.ant.JavaScriptCompressorTask"/>
+	<taskdef name="csscompressor" classname="com.yahoo.platform.yui.compressor.ant.CssCompressorTask"/>
+</antlib>
