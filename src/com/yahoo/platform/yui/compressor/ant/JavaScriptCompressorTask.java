@@ -52,14 +52,12 @@ public class JavaScriptCompressorTask extends CompressorTask {
 		this.disableOptimizations = disableOptimizations;
 	}
 
-	@Override
 	protected void compress(Writer out) throws IOException {
 		compressor.compress(out, this.getLineBreak(), this.doesMunge(),
 				this.isVerbose(), this.doesPreserveSemicolons(),
 				this.areOptimizationsDisabled());
 	}
 
-	@Override
 	protected void setCompressor(Reader in) throws IOException {
 		try {
 			this.compressor = new JavaScriptCompressor(in,

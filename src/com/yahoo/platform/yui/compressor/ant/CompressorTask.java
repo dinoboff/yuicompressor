@@ -29,7 +29,7 @@ import org.apache.tools.ant.types.FileSet;
  */
 public abstract class CompressorTask extends Task {
 	private File srcFile;
-	private Vector<FileSet> fileSets = new Vector<FileSet>();
+	private Vector fileSets = new Vector();
 	private File dstFile;
 	private File dstDir;
 	private String extension;
@@ -126,7 +126,7 @@ public abstract class CompressorTask extends Task {
 			this.compress(this.srcFile);
 		} else {
 			for (int i = 0; i < this.fileSets.size(); i++) {
-				this.compress(this.fileSets.elementAt(i));
+				this.compress( (FileSet) this.fileSets.elementAt(i));
 			}
 		}
 	}
