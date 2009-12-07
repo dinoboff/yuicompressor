@@ -8,16 +8,25 @@ import org.apache.tools.ant.BuildException;
 
 import com.yahoo.platform.yui.compressor.CssCompressor;
 
+/**
+ * JavaScript compression class
+ * 
+ * Uses com.yahoo.platform.yui.compressor.CssCompressor for compression.
+ * 
+ * @author Damien Lebrun
+ * @version 0.1
+ * 
+ */
 public class CssCompressorTask extends CompressorTask {
 
 	private CssCompressor compressor = null;
 
 	protected void compress(Writer out) throws IOException {
-		if (this.compressor != null) {
-			this.compressor.compress(out, this.getLineBreak());
-		} else {
+		if (this.compressor == null) {
 			throw new BuildException("Compressor not set.");
 		}
+
+		this.compressor.compress(out, this.getLineBreak());
 		this.compressor = null;
 	}
 

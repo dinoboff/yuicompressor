@@ -14,15 +14,16 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 /**
  * JavaScript compression class
  * 
- * Add support for nomunge, preservesemicolons and disableoptimizations attribute.
- * Uses com.yahoo.platform.yui.compressor.JavaScriptCompressor for compression.
+ * Add support for nomunge, preservesemicolons and disableoptimizations
+ * attribute. Uses com.yahoo.platform.yui.compressor.JavaScriptCompressor for
+ * compression.
  * 
- * @author dinoboff
+ * @author Damien Lebrun
  * @version 0.1
- *
+ * 
  */
 public class JavaScriptCompressorTask extends CompressorTask {
-	
+
 	private boolean noMunge;
 	private boolean preserveSemicolons;
 	private boolean disableOptimizations;
@@ -53,9 +54,14 @@ public class JavaScriptCompressorTask extends CompressorTask {
 	}
 
 	protected void compress(Writer out) throws IOException {
-		compressor.compress(out, this.getLineBreak(), this.doesMunge(),
-				this.isVerbose(), this.doesPreserveSemicolons(),
-				this.areOptimizationsDisabled());
+		if (this.compressor == null) {
+			throw new BuildException("Compressor not set.");
+		}
+
+		this.compressor.compress(out, this.getLineBreak(), this.doesMunge(),
+				this.isVerbose(), this.doesPreserveSemicolons(), this
+						.areOptimizationsDisabled());
+		this.compressor = null;
 	}
 
 	protected void setCompressor(Reader in) throws IOException {
@@ -64,34 +70,36 @@ public class JavaScriptCompressorTask extends CompressorTask {
 					new ParsingErrorReporter());
 		} catch (EvaluatorException e) {
 			throw new BuildException(
-					"There is a problem with the JavaScript source: " + e.toString());
+					"There is a problem with the JavaScript source: "
+							+ e.toString());
 		}
 	}
-	
+
 	private class ParsingErrorReporter implements ErrorReporter {
-		
+
 		private void log(String msg, int line, int lineOffset, int msgLevel) {
 			if (line < 0) {
-                JavaScriptCompressorTask.this.log(msg, Project.MSG_WARN);
-            } else {
-            	JavaScriptCompressorTask.this.log(line + ':' + lineOffset + ':' + msg, Project.MSG_WARN);
-            }
+				JavaScriptCompressorTask.this.log(msg, Project.MSG_WARN);
+			} else {
+				JavaScriptCompressorTask.this.log(line + ':' + lineOffset + ':'
+						+ msg, Project.MSG_WARN);
+			}
 		}
-		
-        public void warning(String message, String sourceName,
-                int line, String lineSource, int lineOffset) {
-            this.log(message, line, lineOffset, Project.MSG_WARN);
-        }
 
-        public void error(String message, String sourceName,
-                int line, String lineSource, int lineOffset) {
-        	this.log(message, line, lineOffset, Project.MSG_ERR);
-        }
+		public void warning(String message, String sourceName, int line,
+				String lineSource, int lineOffset) {
+			this.log(message, line, lineOffset, Project.MSG_WARN);
+		}
 
-        public EvaluatorException runtimeError(String message, String sourceName,
-                int line, String lineSource, int lineOffset) {
-            this.error(message, sourceName, line, lineSource, lineOffset);
-            return new EvaluatorException(message);
-        }
+		public void error(String message, String sourceName, int line,
+				String lineSource, int lineOffset) {
+			this.log(message, line, lineOffset, Project.MSG_ERR);
+		}
+
+		public EvaluatorException runtimeError(String message,
+				String sourceName, int line, String lineSource, int lineOffset) {
+			this.error(message, sourceName, line, lineSource, lineOffset);
+			return new EvaluatorException(message);
+		}
 	}
 }
