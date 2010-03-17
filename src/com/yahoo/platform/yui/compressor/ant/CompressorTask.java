@@ -31,8 +31,8 @@ import org.apache.tools.ant.types.FileSet;
 public abstract class CompressorTask extends Task {
 	private File srcFile;
 	private Vector fileSets = new Vector();
-	private File dstFile;
-	private File dstDir;
+	private File destFile;
+	private File destDir;
 	private String extension;
 	private String charset = "UTF-8";
 	private int lineBreak = -1;
@@ -47,12 +47,12 @@ public abstract class CompressorTask extends Task {
 		this.fileSets.add(aFileSet);
 	}
 
-	public void setDstFile(File dstFile) {
-		this.dstFile = dstFile;
+	public void setDestFile(File dstFile) {
+		this.destFile = dstFile;
 	}
 
-	public void setDstDir(File dstDir) {
-		this.dstDir = dstDir;
+	public void setDestDir(File dstDir) {
+		this.destDir = dstDir;
 	}
 
 	public void setExtension(String extension) {
@@ -117,7 +117,7 @@ public abstract class CompressorTask extends Task {
 					+ "or a fileset element, but not with both.");
 		}
 
-		if (this.srcFile == null && this.dstFile != null) {
+		if (this.srcFile == null && this.destFile != null) {
 			throw new BuildException("You cannot set a destination file "
 					+ "when compressing a set of file.");
 		}
@@ -151,15 +151,15 @@ public abstract class CompressorTask extends Task {
 	protected File getDstFile(File srcFile) {
 		File dstFile;
 
-		if (this.dstFile != null) {
+		if (this.destFile != null) {
 			// Destination file is explicit
-			return this.dstFile;
+			return this.destFile;
 		}
 
-		if (this.dstDir != null) {
+		if (this.destDir != null) {
 			// make a copy in an other folder
 			String srcFileName = srcFile.getName();
-			dstFile = new File(this.dstDir, srcFileName);
+			dstFile = new File(this.destDir, srcFileName);
 		} else {
 			// Compress in make
 			// or make a compressed copy in the same directory
@@ -190,14 +190,14 @@ public abstract class CompressorTask extends Task {
 	protected File getDstFile(File baseDir, String srcFilePath) {
 		File dstFile;
 
-		if (this.dstFile != null) {
+		if (this.destFile != null) {
 			// Destination file is explicit
-			return this.dstFile;
+			return this.destFile;
 		}
 
-		if (this.dstDir != null) {
+		if (this.destDir != null) {
 			// make a copy in an other folder
-			dstFile = new File(this.dstDir, srcFilePath);
+			dstFile = new File(this.destDir, srcFilePath);
 		} else {
 			// Compress in place
 			// or make a compressed copy in the same directory
